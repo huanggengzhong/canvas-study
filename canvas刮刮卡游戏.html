@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas style="border:solid 1px #ccc" id="cas"></canvas>
+</body>
+
+</html>
+<script type="text/javascript">
+    /* 思路步骤:
+    1.将随机的中奖信息绘制到画布中;
+    2.使用灰色的矩形覆盖中奖信息;
+    3.使用鼠标滑擦区域实现刮刮效果;
+     */
+    var cas = document.getElementById("cas"); //获取画布元素
+    var cxt = cas.getContext('2d') //获取画布工具集
+    console.log(cxt);
+
+
+    //步骤1开始
+    var arr = ["特等奖", "一等奖", "二等奖", "三等奖", "谢谢参与"]
+    // 随机生成文字
+    var randomText = arr[Math.floor(Math.random() * arr.length)];
+    // console.log(randomText);
+    cxt.font = "bold 30px 黑体";
+    cxt.textAlign = "center";
+    cxt.textBaseline = 'middle';
+    cxt.fillStyle = "red"
+    cxt.fillText(randomText, cas.width / 2, cas.height / 2);
+    // 将绘制的文字画布生成图片,做为画布的背景图
+    var bgm = cas.toDataURL('image/png', 1); //记得用cas
+    cas.style.background = "url(" + bgm + ")";
+    //步骤1完成
+
+    //步骤2开始
+    cxt.fillStyle = "#ddd";
+    cxt.fillRect(0, 0, cas.width, cas.height);
+    //步骤2完成
+
+    //步骤3开始
+    var flag = false
+    cas.addEventListener("mousedown", () => {
+        flag = true;
+        cxt.globalCompositeOperation="destination-out";//很重要,设置这个属性,实现绘画的区域与背景透明
+    })
+    cas.addEventListener("mousemove", (e) => {
+        if (flag) {
+            var x = e.clientX;
+            var y = e.clientY;
+            cxt.fillStyle = "red";
+            cxt.fillRect(x, y, 30, 30)
+        }
+    })
+    cas.addEventListener("mouseup", () => {
+        console.log("onmouseup");
+        flag = false;
+
+    })
+    //步骤3完成
+</script>
